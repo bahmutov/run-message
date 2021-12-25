@@ -1,5 +1,5 @@
 name: ci
-on: [push, pull_request]
+on: push
 jobs:
   cypress-run:
     name: Cypress run
@@ -16,4 +16,4 @@ jobs:
         env:
           CYPRESS_RECORD_KEY: ${{ secrets.CYPRESS_RECORD_KEY }}
           # see verbose debug logs with commit info
-          DEBUG: cypress:server:record:ci-info
+          DEBUG: cypress:server:record:ci-info,commit-info

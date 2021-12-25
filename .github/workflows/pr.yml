@@ -1,0 +1,44 @@
+name: pr
+on: pull_request
+jobs:
+  cypress-run:
+    name: Cypress run
+    runs-on: ubuntu-20.04
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+
+      - name: Save Git values
+        # pass env variables from this step to other steps
+        # using GitHub Actions environment file
+        # https://docs.github.com/en/actions/learn-github-actions/workflow-commands-for-github-actions#environment-files
+        run: |
+          echo COMMIT_INFO_BRANCH=$(git rev-parse --abbrev-ref HEAD) >> $GITHUB_ENV
+          echo COMMIT_INFO_MESSAGE=My custom message >> $GITHUB_ENV
+          echo COMMIT_INFO_EMAIL=$(git show -s --pretty=%ae) >> $GITHUB_ENV
+          echo COMMIT_INFO_AUTHOR=$(git show -s --pretty=%an) >> $GITHUB_ENV
+          echo COMMIT_INFO_SHA=$(git show -s --pretty=%H) >> $GITHUB_ENV
+          echo COMMIT_INFO_TIMESTAMP=$(git show -s --pretty=%ct) >> $GITHUB_ENV
+          echo COMMIT_INFO_REMOTE=$(git config --get remote.origin.url) >> $GITHUB_ENV
+          # delete the .git folder afterwords to use the environment values
+          rm -rf .git
+
+      - name: Show Git values
+        run: |
+          echo Branch $COMMIT_INFO_BRANCH
+          echo Message $COMMIT_INFO_MESSAGE
+          echo Email $COMMIT_INFO_EMAIL
+          echo Author $COMMIT_INFO_AUTHOR
+          echo SHA $COMMIT_INFO_SHA
+          echo Timestamp $COMMIT_INFO_TIMESTAMP
+          echo Remote $COMMIT_INFO_REMOTE
+
+      # https://github.com/cypress-io/github-action
+      - name: Cypress run
+        uses: cypress-io/github-action@v2
+        with:
+          record: true
+        env:
+          CYPRESS_RECORD_KEY: ${{ secrets.CYPRESS_RECORD_KEY }}
+          # see verbose debug logs with commit info
+          DEBUG: cypress:server:record:ci-info,commit-info
