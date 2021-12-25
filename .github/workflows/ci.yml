@@ -1,5 +1,5 @@
 name: ci
-on: [push, pull_request]
+on: push
 jobs:
   cypress-run:
     name: Cypress run
@@ -7,18 +7,6 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v2
-
-      - name: Save Git values
-        run: |
-          export COMMIT_INFO_BRANCH=$(git rev-parse --abbrev-ref HEAD)
-          export COMMIT_INFO_MESSAGE=My custom message
-          export COMMIT_INFO_EMAIL=$(git show -s --pretty=%ae)
-          export COMMIT_INFO_AUTHOR=$(git show -s --pretty=%an)
-          export COMMIT_INFO_SHA=$(git show -s --pretty=%H)
-          export COMMIT_INFO_TIMESTAMP=$(git show -s --pretty=%ct)
-          export COMMIT_INFO_REMOTE=$(git config --get remote.origin.url)
-          # delete the .git folder afterwords to use the environment values
-          rm -rf .git
 
       # https://github.com/cypress-io/github-action
       - name: Cypress run
@@ -28,4 +16,4 @@ jobs:
         env:
           CYPRESS_RECORD_KEY: ${{ secrets.CYPRESS_RECORD_KEY }}
           # see verbose debug logs with commit info
-          DEBUG: cypress:server:record:ci-info
+          DEBUG: cypress:server:record:ci-info,commit-info
