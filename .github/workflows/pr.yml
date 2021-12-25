@@ -20,6 +20,16 @@ jobs:
           # delete the .git folder afterwords to use the environment values
           rm -rf .git
 
+      - name: Show Git values
+        run: |
+          echo Branch $COMMIT_INFO_BRANCH
+          echo Message $COMMIT_INFO_MESSAGE
+          echo Email $COMMIT_INFO_EMAIL
+          echo Author $COMMIT_INFO_AUTHOR
+          echo SHA $COMMIT_INFO_SHA
+          echo Timestamp $COMMIT_INFO_TIMESTAMP
+          echo Remote $COMMIT_INFO_REMOTE
+
       # https://github.com/cypress-io/github-action
       - name: Cypress run
         uses: cypress-io/github-action@v2
